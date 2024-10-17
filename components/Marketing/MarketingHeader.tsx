@@ -7,6 +7,13 @@ import { Button } from "@/primitives/Button";
 import { Container } from "@/primitives/Container";
 import { Logo } from "../Logo";
 import styles from "./MarketingHeader.module.css";
+import {
+  SignedIn,
+  SignedOut,
+  SignIn,
+  SignInButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 export function MarketingHeader({
   className,
@@ -18,14 +25,20 @@ export function MarketingHeader({
         <Link href="/">
           <Logo />
         </Link>
-        <form
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+        {/* <form
           action={async () => {
             "use server";
             await signIn();
           }}
         >
           <Button icon={<SignInIcon />}>Sign in</Button>
-        </form>
+        </form> */}
       </Container>
     </header>
   );

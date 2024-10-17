@@ -12,7 +12,7 @@ export function MarketingLayout({
     <div className={clsx(className, styles.layout)} {...props}>
       <MarketingHeader />
       <main>{children}</main>
-      <MarketingFooter className={styles.footer} />
+      {/* <MarketingFooter className={styles.footer} /> */}
     </div>
   );
 }

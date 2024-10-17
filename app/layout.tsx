@@ -8,11 +8,11 @@ import "@liveblocks/react-ui/styles/dark/media-query.css";
 import "../styles/globals.css";
 import "../styles/text-editor.css";
 import "../styles/text-editor-comments.css";
-
+import { ClerkProvider, useAuth } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Liveblocks Starter Kit",
+  title: "Hackathon 20204 FaceOff",
 };
 
 export default async function RootLayout({
@@ -22,10 +22,12 @@ export default async function RootLayout({
 }) {
   const session = await auth();
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Providers session={session}>{children}</Providers>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <Providers session={session}>{children}</Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

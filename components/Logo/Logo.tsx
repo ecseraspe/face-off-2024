@@ -5,7 +5,7 @@ import styles from "./Logo.module.css";
 export function Logo({ className, ...props }: ComponentProps<"div">) {
   return (
     <div className={clsx(className, styles.logo)} {...props}>
-      <svg
+      {/* <svg
         className={styles.mark}
         fill="none"
         viewBox="0 0 32 32"
@@ -17,8 +17,8 @@ export function Logo({ className, ...props }: ComponentProps<"div">) {
           fill="currentColor"
           fillRule="evenodd"
         />
-      </svg>
-      <span className={styles.wordmark}>Starter Kit</span>
+      </svg> */}
+      <span className={styles.wordmark}>Face Off</span>
     </div>
   );
 }

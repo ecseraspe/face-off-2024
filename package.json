@@ -10,9 +10,11 @@
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@liveblocks/client": "^2.9.0",
-    "@liveblocks/node": "^2.9.0",
-    "@liveblocks/react": "^2.9.0",
+    "@clerk/clerk-sdk-node": "^5.0.50",
+    "@clerk/nextjs": "^5.7.3",
+    "@liveblocks/client": "^2.9.1",
+    "@liveblocks/node": "^2.9.1",
+    "@liveblocks/react": "^2.9.1",
     "@liveblocks/react-ui": "^2.9.0",
     "@liveblocks/yjs": "^2.9.0",
     "@radix-ui/react-dialog": "^1.0.2",
