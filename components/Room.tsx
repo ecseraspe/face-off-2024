@@ -169,7 +169,7 @@ export default function Room() {
           </ul>
 
           <div className="mt-48">
-            {count >= 1 && isNotReady() && (
+            {count > 10 && isNotReady() && (
               <button
                 onClick={toggleReady}
                 disabled={!isButtonEnabled || ready}
