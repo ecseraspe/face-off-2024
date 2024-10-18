@@ -11,14 +11,7 @@ import {
 import clsx from "clsx";
 import { nanoid } from "nanoid";
 import { useSession } from "next-auth/react";
-import {
-  ChangeEvent,
-  ComponentProps,
-  FocusEvent,
-  PointerEvent,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, ComponentProps, FocusEvent, PointerEvent, useRef, useState } from "react";
 import { PlusIcon, RedoIcon, UndoIcon } from "@/icons";
 import { Button } from "@/primitives/Button";
 import { DocumentSpinner } from "@/primitives/Spinner";
@@ -29,7 +22,7 @@ import { WhiteboardNote } from "./WhiteboardNote";
 import styles from "./Whiteboard.module.css";
 
 interface Props extends ComponentProps<"div"> {
-  currentUser: Liveblocks["UserMeta"]["info"] | null;
+  currentUser: Liveblocks["UserMeta"][] | null;
 }
 
 /**
@@ -42,19 +35,17 @@ export function Whiteboard() {
   const { data: session } = useSession();
 
   return (
-    <ClientSideSuspense fallback={<DocumentSpinner />}>
-      <Canvas currentUser={session?.user.info ?? null} />
-    </ClientSideSuspense>
+    // <ClientSideSuspense fallback={<DocumentSpinner />}>
+    //   <Canvas currentUser={session?.user.info ?? null} />
+    // </ClientSideSuspense>
+    null
   );
 }
 
 // The main Liveblocks code, handling all events and note modifications
 function Canvas({ currentUser, className, style, ...props }: Props) {
   // An array of every note id
-  const noteIds: string[] = useStorage(
-    (root) => Array.from(root.notes.keys()),
-    shallow
-  );
+  // const noteIds: string[] = useStorage((root) => Array.from(root.notes.keys()), shallow);
 
   const history = useHistory();
   const canUndo = useCanUndo();
@@ -87,7 +78,7 @@ function Canvas({ currentUser, className, style, ...props }: Props) {
       selectedBy: null,
       id: noteId,
     });
-    storage.get("notes").set(noteId, note);
+    // storage.get("notes").set(noteId, note);
   }, []);
 
   // Delete a note
@@ -96,7 +87,7 @@ function Canvas({ currentUser, className, style, ...props }: Props) {
       return;
     }
 
-    storage.get("notes").delete(noteId);
+    // storage.get("notes").delete(noteId);
   }, []);
 
   // Update a note, if it exists
@@ -105,17 +96,14 @@ function Canvas({ currentUser, className, style, ...props }: Props) {
       return;
     }
 
-    const note = storage.get("notes").get(noteId);
-    if (note) {
-      note.update(updates);
-    }
+    // const note = storage.get("notes").get(noteId);
+    // if (note) {
+    //   note.update(updates);
+    // }
   }, []);
 
   // On note pointer down, pause history, set dragged note
-  function handleNotePointerDown(
-    e: PointerEvent<HTMLDivElement>,
-    noteId: string
-  ) {
+  function handleNotePointerDown(e: PointerEvent<HTMLDivElement>, noteId: string) {
     history.pause();
     e.stopPropagation();
     const element = document.querySelector(`[data-note="${noteId}"]`);
@@ -158,10 +146,7 @@ function Canvas({ currentUser, className, style, ...props }: Props) {
   }
 
   // When note text is changed, update the text and selected user on the LiveObject
-  function handleNoteChange(
-    e: ChangeEvent<HTMLTextAreaElement>,
-    noteId: string
-  ) {
+  function handleNoteChange(e: ChangeEvent<HTMLTextAreaElement>, noteId: string) {
     handleNoteUpdate(noteId, { text: e.target.value, selectedBy: currentUser });
   }
 
@@ -191,18 +176,18 @@ function Canvas({ currentUser, className, style, ...props }: Props) {
         /*
          * Iterate through each note in the LiveMap and render it as a note
          */
-        noteIds.map((id) => (
-          <WhiteboardNote
-            dragged={id === dragInfo?.current?.noteId}
-            id={id}
-            key={id}
-            onBlur={(e) => handleNoteBlur(e, id)}
-            onChange={(e) => handleNoteChange(e, id)}
-            onDelete={() => handleNoteDelete(id)}
-            onFocus={(e) => handleNoteFocus(e, id)}
-            onPointerDown={(e) => handleNotePointerDown(e, id)}
-          />
-        ))
+        // noteIds.map((id) => (
+        //   <WhiteboardNote
+        //     dragged={id === dragInfo?.current?.noteId}
+        //     id={id}
+        //     key={id}
+        //     onBlur={(e) => handleNoteBlur(e, id)}
+        //     onChange={(e) => handleNoteChange(e, id)}
+        //     onDelete={() => handleNoteDelete(id)}
+        //     onFocus={(e) => handleNoteFocus(e, id)}
+        //     onPointerDown={(e) => handleNotePointerDown(e, id)}
+        //   />
+        // ))
       }
 
       {canWrite && (

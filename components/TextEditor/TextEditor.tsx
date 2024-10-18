@@ -44,15 +44,14 @@ export function Editor() {
 
   // Set up Liveblocks Yjs provider
   useEffect(() => {
-    const yDoc = new Y.Doc();
-    const yProvider = new LiveblocksYjsProvider(room, yDoc);
-    setDoc(yDoc);
-    setProvider(yProvider);
-
-    return () => {
-      yDoc?.destroy();
-      yProvider?.destroy();
-    };
+    // const yDoc = new Y.Doc();
+    // const yProvider = new LiveblocksYjsProvider(room, yDoc);
+    // setDoc(yDoc);
+    // setProvider(yProvider);
+    // return () => {
+    //   yDoc?.destroy();
+    //   yProvider?.destroy();
+    // };
   }, [room]);
 
   if (!doc || !provider) {
@@ -69,7 +68,7 @@ type EditorProps = {
 
 function TiptapEditor({ doc, provider }: EditorProps) {
   // Get user info from Liveblocks authentication endpoint
-  const { name, color, avatar: picture } = useSelf((me) => me.info);
+  // const { name, color, avatar: picture } = useSelf((me) => me.info);
 
   // Check if user has write access in current room
   const canWrite = useSelf((me) => me.canWrite);
@@ -178,23 +177,21 @@ function TiptapEditor({ doc, provider }: EditorProps) {
         document: doc,
       }),
       // Attach provider and user info
-      CollaborationCursor.configure({
-        provider: provider,
-        user: {
-          name,
-          color,
-          picture,
-        },
-      }),
+      // CollaborationCursor.configure({
+      //   provider: provider,
+      //   user: {
+      //     name,
+      //     color,
+      //     picture,
+      //   },
+      // }),
     ],
   });
 
   return (
     <div className={styles.container}>
       {canWrite ? (
-        <div className={styles.editorHeader}>
-          {editor ? <Toolbar editor={editor} /> : null}
-        </div>
+        <div className={styles.editorHeader}>{editor ? <Toolbar editor={editor} /> : null}</div>
       ) : null}
       <div className={styles.editorPanel}>
         {editor ? <SelectionMenu editor={editor} /> : null}
@@ -205,10 +202,7 @@ function TiptapEditor({ doc, provider }: EditorProps) {
               {editor ? <ThreadList editor={editor} /> : null}
             </div>
           </div>
-          <div
-            className={styles.mobileThreadListContainer}
-            data-threads="mobile"
-          >
+          <div className={styles.mobileThreadListContainer} data-threads="mobile">
             {editor ? <ThreadList editor={editor} /> : null}
           </div>
         </div>

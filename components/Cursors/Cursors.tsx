@@ -81,17 +81,18 @@ export function Cursors({ element }: Props) {
             return null;
           }
 
-          return (
-            <Cursor
-              color={info?.color}
-              key={`cursor-${connectionId}`}
-              // connectionId is an integer that is incremented at every new connections
-              // Assigning a color with a modulo makes sure that a specific user has the same colors on every clients
-              name={info?.name}
-              x={presence.cursor.x}
-              y={presence.cursor.y}
-            />
-          );
+          // return (
+          //   <Cursor
+          //     color={info?.color}
+          //     key={`cursor-${connectionId}`}
+          //     // connectionId is an integer that is incremented at every new connections
+          //     // Assigning a color with a modulo makes sure that a specific user has the same colors on every clients
+          //     name={info?.name}
+          //     x={presence.cursor.x}
+          //     y={presence.cursor.y}
+          //   />
+          // );
+          return null;
         })
       }
     </>

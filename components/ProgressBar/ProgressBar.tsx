@@ -1,7 +1,6 @@
 "use client";
 // components/Car.tsx
 import React, { useEffect, useState } from "react";
-import { TruckIcon } from "@heroicons/react/24/solid";
 import { useMyPresence, useOthers } from "@liveblocks/react";
 
 type IProps = {
@@ -21,8 +20,6 @@ const colors = [
   "bg-orange-500",
 ];
 const ProgressBar: React.FC<IProps> = ({ value }) => {
-  // const [speed, setSpeed] = useState(5);
-  // const [isMoving, setIsMoving] = useState(false);
   const [progress, setProgress] = useState<number>();
   const others = useOthers();
   const [myPresence, updateMyPresence] = useMyPresence();
@@ -83,10 +80,7 @@ const ProgressBar: React.FC<IProps> = ({ value }) => {
       </div> */}
       {/* Horizontal progress bar with avatar */}
       {/* <div className="relative w-full bg-gray-200 h-6 rounded-full mt-8"> */}
-      <div
-        className="relative bg- pt-3 pb-3 w-full"
-        style={{ maxWidth: "550px" }}
-      >
+      <div className="relative bg- pt-3 pb-3 w-full" style={{ maxWidth: "550px" }}>
         {others.map((user) => {
           return (
             <div

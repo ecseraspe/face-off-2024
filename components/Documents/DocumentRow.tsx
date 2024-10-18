@@ -3,13 +3,7 @@ import clsx from "clsx";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { DOCUMENT_URL } from "@/constants";
 import { DeleteIcon, MoreIcon } from "@/icons";
 import { useGroupsInfo } from "@/lib/hooks";
@@ -36,16 +30,11 @@ export function DocumentRow({
   revalidateDocuments,
   ...props
 }: Props) {
-  const groupIds = useMemo(
-    () => Object.keys(document.accesses.groups),
-    [document]
-  );
+  const groupIds = useMemo(() => Object.keys(document.accesses.groups), [document]);
   const groups = useGroupsInfo(groupIds);
 
   const { data: session } = useSession();
-  const [currentUserAccess, setCurrentUserAccess] = useState(
-    DocumentAccess.NONE
-  );
+  const [currentUserAccess, setCurrentUserAccess] = useState(DocumentAccess.NONE);
 
   // Check if current user has access to edit the room
   useEffect(() => {
@@ -91,13 +80,11 @@ export function DocumentRow({
               </span>
             ) : null}
           </span>
-          <span className={styles.documentDate}>
-            Edited {formatDistanceToNow(date)} ago
-          </span>
+          <span className={styles.documentDate}>Edited {formatDistanceToNow(date)} ago</span>
         </div>
         {others && (
           <div className={styles.presence}>
-            <AvatarStack
+            {/* <AvatarStack
               avatars={others.map((other) => ({
                 name: other.info.name,
                 src: other.info.avatar,
@@ -105,7 +92,8 @@ export function DocumentRow({
               }))}
               size={20}
               tooltip
-            />
+            /> */}
+            Hello
           </div>
         )}
       </Link>
@@ -133,11 +121,7 @@ export function DocumentRow({
             sideOffset={10}
             {...props}
           >
-            <Button
-              className={styles.moreButton}
-              icon={<MoreIcon />}
-              variant="secondary"
-            />
+            <Button className={styles.moreButton} icon={<MoreIcon />} variant="secondary" />
           </Popover>
         </div>
       ) : null}
@@ -145,10 +129,7 @@ export function DocumentRow({
   );
 }
 
-export function DocumentRowSkeleton({
-  className,
-  ...props
-}: ComponentProps<"div">) {
+export function DocumentRowSkeleton({ className, ...props }: ComponentProps<"div">) {
   return (
     <div className={clsx(className, styles.row)} {...props}>
       <div className={styles.container}>

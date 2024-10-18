@@ -15,11 +15,7 @@ import { Avatar } from "@/primitives/Avatar";
 import { Button } from "@/primitives/Button";
 import styles from "./WhiteboardNote.module.css";
 
-interface Props
-  extends Omit<
-    ComponentProps<"div">,
-    "id" | "onBlur" | "onChange" | "onFocus"
-  > {
+interface Props extends Omit<ComponentProps<"div">, "id" | "onBlur" | "onChange" | "onFocus"> {
   dragged: boolean;
   id: string;
   onBlur: FocusEventHandler<HTMLTextAreaElement>;
@@ -43,26 +39,23 @@ export const WhiteboardNote = memo(
     ...props
   }: Props) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    const note = useStorage((root) => root.notes.get(id));
+    // const note = useStorage((root) => root.notes.get(id));
 
     const handleDoubleClick = useCallback(() => {
       textAreaRef.current?.focus();
     }, []);
 
-    const handleKeyDown = useCallback(
-      (event: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.key === "Escape") {
-          textAreaRef.current?.blur();
-        }
-      },
-      []
-    );
+    const handleKeyDown = useCallback((event: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === "Escape") {
+        textAreaRef.current?.blur();
+      }
+    }, []);
 
-    if (!note) {
-      return null;
-    }
+    // if (!note) {
+    //   return null;
+    // }
 
-    const { x, y, text, selectedBy } = note;
+    // const { x, y, text, selectedBy } = note;
 
     return (
       <div
@@ -70,13 +63,13 @@ export const WhiteboardNote = memo(
         data-note={id}
         onDoubleClick={handleDoubleClick}
         onPointerDown={onPointerDown}
-        style={{
-          transform: `translate(${x}px, ${y}px)`,
-          transition: dragged ? "none" : undefined,
-          zIndex: dragged ? 1 : 0,
-          cursor: dragged ? "grabbing" : "grab",
-          ...style,
-        }}
+        // style={{
+        //   transform: `translate(${x}px, ${y}px)`,
+        //   transition: dragged ? "none" : undefined,
+        //   zIndex: dragged ? 1 : 0,
+        //   cursor: dragged ? "grabbing" : "grab",
+        //   ...style,
+        // }}
         {...props}
       >
         <div className={styles.note}>
@@ -88,19 +81,19 @@ export const WhiteboardNote = memo(
               variant="subtle"
             />
             <div className={styles.presence}>
-              {selectedBy ? (
+              {/* {selectedBy ? (
                 <Avatar
                   color={selectedBy.color}
                   name={selectedBy.name}
                   outline
                   src={selectedBy.avatar}
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
           <div className={styles.content}>
-            <div className={styles.textAreaSize}>{text + " "}</div>
-            <textarea
+            {/* <div className={styles.textAreaSize}>{text + " "}</div> */}
+            {/* <textarea
               className={styles.textArea}
               onBlur={onBlur}
               onChange={onChange}
@@ -110,7 +103,7 @@ export const WhiteboardNote = memo(
               placeholder="Write note…"
               ref={textAreaRef}
               value={text}
-            />
+            /> */}
           </div>
         </div>
       </div>

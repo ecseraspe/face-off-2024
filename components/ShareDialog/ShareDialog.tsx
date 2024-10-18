@@ -2,17 +2,10 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { useSession } from "next-auth/react";
 import { ComponentProps, useCallback, useEffect, useState } from "react";
 import { UserIcon, UsersIcon } from "@/icons";
-import {
-  getDocument,
-  getDocumentGroups,
-  getDocumentUsers,
-} from "@/lib/actions";
+import { getDocument, getDocumentGroups, getDocumentUsers } from "@/lib/actions";
 import { useDocumentsFunctionSWR, useInitialDocument } from "@/lib/hooks";
 import { getDocumentAccess } from "@/lib/utils";
-import {
-  useBroadcastEvent,
-  useEventListener,
-} from "@liveblocks/react/suspense";
+import { useBroadcastEvent, useEventListener } from "@liveblocks/react/suspense";
 import { Dialog } from "@/primitives/Dialog";
 import { DocumentAccess } from "@/types";
 import { ShareDialogDefault } from "./ShareDialogDefault";
@@ -28,9 +21,7 @@ export function ShareDialog({ children, ...props }: Props) {
   const { id: documentId, accesses: documentAccesses } = useInitialDocument();
 
   const { data: session } = useSession();
-  const [currentUserAccess, setCurrentUserAccess] = useState(
-    DocumentAccess.NONE
-  );
+  const [currentUserAccess, setCurrentUserAccess] = useState(DocumentAccess.NONE);
 
   // Get a list of users attached to the document (+ their info)
   const {
@@ -60,9 +51,7 @@ export function ShareDialog({ children, ...props }: Props) {
   });
 
   // Get default access value from document, or the default value from the property
-  const defaultAccess = document
-    ? document.accesses.default
-    : documentAccesses.default;
+  const defaultAccess = document ? document.accesses.default : documentAccesses.default;
 
   // If you have no access to this room, refresh
   if (defaultAccessError && defaultAccessError.code === 403) {
@@ -91,8 +80,7 @@ export function ShareDialog({ children, ...props }: Props) {
     const accessChanges = new Set([currentUserAccess, accessLevel]);
     if (
       accessChanges.has(DocumentAccess.READONLY) &&
-      (accessChanges.has(DocumentAccess.EDIT) ||
-        accessChanges.has(DocumentAccess.FULL))
+      (accessChanges.has(DocumentAccess.EDIT) || accessChanges.has(DocumentAccess.FULL))
     ) {
       window.location.reload();
       return;
@@ -118,9 +106,9 @@ export function ShareDialog({ children, ...props }: Props) {
 
   // If a share dialog update has been received, refresh data
   useEventListener(({ event }) => {
-    if (event.type === "SHARE_DIALOG_UPDATE") {
-      revalidateAll();
-    }
+    // if (event.type === "SHARE_DIALOG_UPDATE") {
+    //   revalidateAll();
+    // }
   });
 
   return (

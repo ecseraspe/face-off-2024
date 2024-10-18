@@ -28,9 +28,7 @@ export function ThreadList({ editor }: Props) {
         {threads.length ? (
           threads
             .sort(sortThreads)
-            .map((thread) => (
-              <CustomThread key={thread.id} thread={thread} editor={editor} />
-            ))
+            .map((thread) => <CustomThread key={thread.id} thread={thread} editor={editor} />)
         ) : (
           <NoComments />
         )}
@@ -62,12 +60,12 @@ function CustomThread({ editor, thread }: Props & { thread: ThreadData }) {
 
   const handleThreadDelete = useCallback(
     (thread: ThreadData) => {
-      removeCommentHighlight(editor, thread.metadata.highlightId);
+      removeCommentHighlight(editor, "0");
     },
     [editor]
   );
 
-  const quoteHtml = getCommentHighlightContent(thread.metadata.highlightId);
+  const quoteHtml = getCommentHighlightContent("0");
 
   return (
     <div className="hide-collaboration-cursor">
@@ -80,17 +78,11 @@ function CustomThread({ editor, thread }: Props & { thread: ThreadData }) {
           <div
             className={styles.threadQuote}
             dangerouslySetInnerHTML={{
-              __html: getCommentHighlightContent(
-                thread.metadata.highlightId
-              ) as string,
+              __html: getCommentHighlightContent("0") as string,
             }}
           />
         ) : null}
-        <Thread
-          thread={thread}
-          onThreadDelete={handleThreadDelete}
-          indentCommentContent={false}
-        />
+        {/* <Thread thread={thread} onThreadDelete={handleThreadDelete} indentCommentContent={false} /> */}
       </div>
     </div>
   );
@@ -152,10 +144,7 @@ function ThreadComposer({ editor }: Props) {
         return;
       }
 
-      removeCommentHighlight(
-        editor,
-        editor.storage.commentHighlight.currentHighlightId
-      );
+      removeCommentHighlight(editor, editor.storage.commentHighlight.currentHighlightId);
       editor.storage.commentHighlight.currentHighlightId = null;
       editor.storage.commentHighlight.showComposer = false;
     }
