@@ -98,8 +98,7 @@ export default function Room() {
         setCountdown(remainingCountdown);
       } else {
         setCountdown(null);
-        const remainingGameTime =
-          GAME_DURATION - elapsedTime + COUNTDOWN_DURATION;
+        const remainingGameTime = GAME_DURATION - elapsedTime + COUNTDOWN_DURATION;
         setGameTimer(remainingGameTime > 0 ? remainingGameTime : null);
       }
     }
@@ -144,13 +143,9 @@ export default function Room() {
 
   const isNotReady = () => {
     if (ready) {
-      return (
-        others.filter((user) => user.presence?.isReady === false).length > 0
-      );
+      return others.filter((user) => user.presence?.isReady === false).length > 0;
     } else {
-      return (
-        others.filter((user) => user.presence?.isReady === false).length + 1 > 0
-      );
+      return others.filter((user) => user.presence?.isReady === false).length + 1 > 0;
     }
   };
   return (
@@ -165,8 +160,7 @@ export default function Room() {
           <ul>
             {others.map((user) => (
               <li key={user.connectionId}>
-                {user.info?.name} :{" "}
-                {user.presence?.isReady ? "Ready" : "Not Ready"}
+                {user.info?.name} : {user.presence?.isReady ? "Ready" : "Not Ready"}
               </li>
             ))}
             <li key={myPresence.name}>
@@ -175,7 +169,7 @@ export default function Room() {
           </ul>
 
           <div className="mt-48">
-            {count < 3 && isNotReady() && (
+            {count >= 1 && isNotReady() && (
               <button
                 onClick={toggleReady}
                 disabled={!isButtonEnabled || ready}
