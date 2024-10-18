@@ -367,7 +367,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
       >
         {isListening ? "Listening..." : "Start Speaking"}
       </button>
-      <button onClick={incrementProgress}>Increment</button>
+      {/* <button onClick={incrementProgress}>Increment</button> */}
 
       <button
         onClick={() => skipWord()}
