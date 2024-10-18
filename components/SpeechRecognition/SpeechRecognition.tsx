@@ -1,6 +1,6 @@
 "use client"; // Ensures this component runs on the client side
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import SpeechSynthesizer from "./SpeechSynthesizer";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { useMyPresence, useStorage, useUpdateMyPresence } from "@liveblocks/react";
@@ -30,7 +30,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
   const [spokenWord, setSpokenWord] = useState<string>(""); // New state for spoken word
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [myPresence, updateMyPresence] = useMyPresence();
-
+  const audioRefSuccess = useRef<HTMLAudioElement | null>(null);
   const speakText = () => {
     const speechConfig = sdk.SpeechConfig.fromSubscription(
       process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY!,
@@ -86,11 +86,15 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
       setSpokenWord(spokenWord); // Update the spoken word
 
       if (spokenWord === wordToMatch.toLowerCase()) {
+        recognition.stop(); // Stop listening after the speech ends
         incrementProgress(); // Move the progress bar
         nextWord(wordToMatch, wIndex + 1); // Show the next word
+        audioRefSuccess.current?.play();
+
         console.log("@@@@3");
       } else {
         // alert("Incorrect pronunciation. Try again!");
+        recognition.stop(); // Stop listening after the speech ends
         startListening(wordToMatch, wIndex); // Restart the recognition
         console.log("@@@@4");
       }
@@ -98,6 +102,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
 
     recognition.onspeechend = () => {
       recognition.stop(); // Stop listening after the speech ends
+      startListening(wordToMatch, wIndex); // Restart the recognition
     };
 
     recognition.onerror = (event: any) => {
@@ -173,6 +178,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
       >
         Skip
       </button>
+      <audio ref={audioRefSuccess} src="../../../assets/pickup_word.wav" preload="auto" />
     </div>
   );
 };
