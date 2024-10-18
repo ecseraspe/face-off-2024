@@ -31,7 +31,7 @@ export const authConfig: NextAuthConfig = {
           id: user.id,
           name: user.name,
           email: user.id,
-          // image: user.avatar,
+          image: user.image,
         };
       },
     }),
