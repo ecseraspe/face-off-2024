@@ -272,6 +272,11 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     setIsListening(false);
   };
 
+  const getTranslation = (currentWord: string) => {
+    const word = tagalogWords.find((f) => f.filipino === currentWord);
+    return word?.english;
+  };
+
   useEffect(() => {
     nextWord();
   }, []);
@@ -347,9 +352,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
         </button>
       </div>
 
-      <p className="bg-gray-200 p-3 text-gray-500">
-        Translation : {tagalogWords[wordIndex].english}
-      </p>
+      <p className="bg-gray-200 p-3 text-gray-500">Translation : {getTranslation(currentWord)}</p>
 
       {spokenWord && (
         <div className="mt-4">
