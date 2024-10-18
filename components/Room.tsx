@@ -269,7 +269,11 @@ export default function Room() {
         </>
       )}
 
-      {countdown !== null && !gameTimer && <h2>Starting in: {countdown}</h2>}
+      {countdown !== null && !gameTimer && (
+        <p>
+          Starting in: <h1 className="text-8xl font-bold text-red-500">{countdown}</h1>
+        </p>
+      )}
       {gameTimer !== null && <h2>Time Left: {gameTimer} seconds</h2>}
 
       {isHost && !countdown && !gameTimer && ready && isEveryoneReady() && (
