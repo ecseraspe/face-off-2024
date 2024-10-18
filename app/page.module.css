@@ -12,9 +12,10 @@
 .heroTitle {
   max-width: 400px;
   margin-bottom: var(--space-9);
-  font-size: var(--size-4xl);
+  font-size: var(--size-3xl);
   font-weight: 800;
   line-height: 1.25;
+  text-align: center;
 }
 
 .heroLead {
@@ -25,6 +26,10 @@
 
 .heroInfo {
   margin-bottom: var(--space-12);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .heroActions {

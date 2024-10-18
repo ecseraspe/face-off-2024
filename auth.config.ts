@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthConfig, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getUser } from "@/lib/database";
 
@@ -31,7 +31,7 @@ export const authConfig: NextAuthConfig = {
           id: user.id,
           name: user.name,
           email: user.id,
-          image: user.avatar,
+          // image: user.avatar,
         };
       },
     }),

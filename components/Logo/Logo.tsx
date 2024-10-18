@@ -18,7 +18,7 @@ export function Logo({ className, ...props }: ComponentProps<"div">) {
           fillRule="evenodd"
         />
       </svg> */}
-      <span className={styles.wordmark}>Face Off</span>
+      <span className={styles.wordmark}>Hackathon 2024</span>
     </div>
   );
 }

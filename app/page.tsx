@@ -31,14 +31,26 @@ export default function Index() {
     <MarketingLayout>
       <Container className={styles.section}>
         <div className={styles.heroInfo}>
-          <h1 className={styles.heroTitle}>Hackathon 2024</h1>
-          <p className={styles.heroLead}>Speech Recognition FaceOff</p>
+          <h1 className={styles.heroTitle}>Speaking a new language</h1>
+          <p className={styles.heroLead}>Pronounciation Face-Off</p>
           <LiveblocksProvider
             // publicApiKey={`${process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY}`}
             authEndpoint="/api/liveblocks-auth"
           >
-            <RoomProvider id={roomId} initialPresence={{}} initialStorage={{}}>
-              <ClientSideSuspense fallback={<div>Loading…</div>}>
+            <RoomProvider
+              id={roomId}
+              initialPresence={{
+                name: "",
+                isReady: false,
+                color: "",
+              }}
+              initialStorage={{
+                startTime: null,
+              }}
+            >
+              <ClientSideSuspense
+                fallback={<div>Please signin to join...</div>}
+              >
                 <Room />
               </ClientSideSuspense>
             </RoomProvider>
