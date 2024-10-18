@@ -295,7 +295,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     setIsListening(true);
 
     recognition.onresult = async (event: any) => {
-      if (!isListening) return;
+      // if (!isListening) return;
       const spokenWord = event.results[0][0].transcript.toLowerCase();
       console.log("@@@@2", spokenWord);
       setSpokenWord(spokenWord); // Update the spoken word
