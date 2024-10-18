@@ -43,7 +43,7 @@ export default function Room() {
         setToken(token);
         // Use this token to join the room
       } else {
-        console.error("Failed to authorize sample:", await response.json());
+        console.error("Failed to authorize pagkatotoy", await response.json());
       }
     }
     fetchToken();
