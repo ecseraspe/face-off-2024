@@ -31,56 +31,6 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [myPresence, updateMyPresence] = useMyPresence();
 
-  const nextWord = () => {
-    let newIndex = 0;
-    if (currentWord) {
-      newIndex = wordIndex + 1;
-    }
-    setWordIndex(newIndex);
-    const randomWord = tagalogWords[newIndex];
-    setCurrentWord(randomWord);
-    setSpokenWord("");
-    if (!isListening) {
-      setIsListening(true);
-      startListening(randomWord); // Automatically restart the recognition
-    }
-  };
-
-  const startListeningV2 = (wordToMatch: string) => {
-    var speechConfig = sdk.SpeechConfig.fromSubscription(
-      process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY!,
-      process.env.NEXT_PUBLIC_AZURE_SPEECH_REGION!
-    );
-
-    speechConfig.speechRecognitionLanguage = "fil-PH";
-    var audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
-    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
-
-    setIsListening(true);
-
-    recognizer.recognizeOnceAsync(
-      function (result) {
-        const spokenWord = result.text.toLowerCase();
-        setSpokenWord(spokenWord); // Update the spoken word
-        if (spokenWord === wordToMatch.toLowerCase()) {
-          incrementProgress(); // Move the progress bar
-          recognizer.close();
-          nextWord(); // Show the next word
-          return;
-        }
-
-        recognizer.close();
-        startListening(wordToMatch); // Restart the recognition
-      },
-      function (err) {
-        window.console.log(err);
-
-        recognizer.close();
-        // recognizer = undefined;
-      }
-    );
-  };
-
   const speakText = () => {
     const speechConfig = sdk.SpeechConfig.fromSubscription(
       process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY!,
@@ -114,7 +64,8 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     );
   };
 
-  const startListening = (wordToMatch: string) => {
+  const startListening = (wordToMatch: string, wIndex: number) => {
+    console.log("@@@@1", wordToMatch);
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -131,13 +82,17 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
 
     recognition.onresult = (event: any) => {
       const spokenWord = event.results[0][0].transcript.toLowerCase();
+      console.log("@@@@2", spokenWord);
       setSpokenWord(spokenWord); // Update the spoken word
+
       if (spokenWord === wordToMatch.toLowerCase()) {
         incrementProgress(); // Move the progress bar
-        nextWord(); // Show the next word
+        nextWord(wordToMatch, wIndex + 1); // Show the next word
+        console.log("@@@@3");
       } else {
         // alert("Incorrect pronunciation. Try again!");
-        startListening(wordToMatch); // Restart the recognition
+        startListening(wordToMatch, wIndex); // Restart the recognition
+        console.log("@@@@4");
       }
     };
 
@@ -150,12 +105,32 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     };
   };
 
+  const nextWord = useCallback(
+    (cWord: string | undefined, indx: number) => {
+      let newIndex = 0;
+      if (cWord) {
+        newIndex = indx;
+      }
+
+      const randomWord = tagalogWords[newIndex];
+      setCurrentWord(randomWord);
+      setWordIndex(newIndex);
+      setSpokenWord("");
+
+      if (!isListening) {
+        setIsListening(true);
+        startListening(randomWord, newIndex); // Automatically restart the recognition
+      }
+    },
+    [currentWord, wordIndex]
+  );
+
   useEffect(() => {
-    nextWord();
+    nextWord(undefined, 0);
   }, []);
 
   const skipWord = () => {
-    nextWord();
+    nextWord(currentWord, wordIndex + 1);
   };
 
   // useEffect(() => {
