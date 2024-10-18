@@ -272,9 +272,12 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     setIsListening(false);
   };
 
-  const getTranslation = (currentWord: string) => {
-    const word = tagalogWords.find((f) => f.filipino === currentWord);
-    return word?.english;
+  const getTranslation = (currentWord: string | undefined) => {
+    if (currentWord) {
+      const word = tagalogWords.find((f) => f.filipino === currentWord);
+      return word?.english;
+    }
+    return null;
   };
 
   useEffect(() => {
