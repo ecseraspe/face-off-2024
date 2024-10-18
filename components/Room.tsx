@@ -24,8 +24,15 @@ export default function Room() {
   const timerInterval = useRef<NodeJS.Timer | null>(null);
   const startTime = useStorage((root) => root.startTime); // Track the start time in storage
   const [isHost, setIsHost] = useState(false);
-  const [startGame, setStartGame] = useState(false);
+  const [startGame, setStartGame] = useState(true);
   const [gameOver, setGameOver] = useState(false);
+  const { userId, isSignedIn } = useAuth(); // Assume this provides `user` and `logout` functions
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      updateMyPresence({ ...myPresence, isReady: false });
+    }
+  }, [isSignedIn]);
 
   useEffect(() => {
     async function fetchToken() {
@@ -148,6 +155,19 @@ export default function Room() {
       return others.filter((user) => user.presence?.isReady === false).length + 1 > 0;
     }
   };
+
+  const isEveryoneReady = () => {
+    return others.some((user) => !user.presence.isReady) === false;
+  };
+
+  console.log(
+    "@@@1",
+    isHost,
+    countdown,
+    gameTimer,
+    ready,
+    others.every((user) => user.presence.isReady)
+  );
   return (
     <div style={{ textAlign: "center" }} className="w-full pt-5 pb-5">
       {startGame ? (
@@ -189,19 +209,15 @@ export default function Room() {
       {countdown !== null && !gameTimer && <h2>Starting in: {countdown}</h2>}
       {gameTimer !== null && <h2>Time Left: {gameTimer} seconds</h2>}
 
-      {isHost &&
-        !countdown &&
-        !gameTimer &&
-        ready &&
-        others.every((user) => user.presence.isReady) && (
-          <button
-            onClick={startCountdown}
-            style={{ padding: "10px 20px" }}
-            className="px-4 py-2 text-white rounded bg-blue-500"
-          >
-            Start Game
-          </button>
-        )}
+      {isHost && !countdown && !gameTimer && ready && isEveryoneReady() && (
+        <button
+          onClick={startCountdown}
+          style={{ padding: "10px 20px" }}
+          className="px-4 py-2 text-white rounded bg-blue-500"
+        >
+          Start Game
+        </button>
+      )}
     </div>
   );
 }
