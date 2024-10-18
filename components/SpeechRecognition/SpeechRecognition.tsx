@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import SpeechSynthesizer from "./SpeechSynthesizer";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-import { useStorage } from "@liveblocks/react";
+import { useMyPresence, useStorage, useUpdateMyPresence } from "@liveblocks/react";
 
 type IProps = {
   incrementProgress: () => void;
@@ -29,6 +29,57 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [spokenWord, setSpokenWord] = useState<string>(""); // New state for spoken word
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [myPresence, updateMyPresence] = useMyPresence();
+
+  const nextWord = () => {
+    let newIndex = 0;
+    if (currentWord) {
+      newIndex = wordIndex + 1;
+    }
+    setWordIndex(newIndex);
+    const randomWord = tagalogWords[newIndex];
+    setCurrentWord(randomWord);
+    setSpokenWord("");
+    if (!isListening) {
+      setIsListening(true);
+      startListening(randomWord); // Automatically restart the recognition
+    }
+  };
+
+  const startListeningV2 = (wordToMatch: string) => {
+    var speechConfig = sdk.SpeechConfig.fromSubscription(
+      process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY!,
+      process.env.NEXT_PUBLIC_AZURE_SPEECH_REGION!
+    );
+
+    speechConfig.speechRecognitionLanguage = "fil-PH";
+    var audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
+    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
+    setIsListening(true);
+
+    recognizer.recognizeOnceAsync(
+      function (result) {
+        const spokenWord = result.text.toLowerCase();
+        setSpokenWord(spokenWord); // Update the spoken word
+        if (spokenWord === wordToMatch.toLowerCase()) {
+          incrementProgress(); // Move the progress bar
+          recognizer.close();
+          nextWord(); // Show the next word
+          return;
+        }
+
+        recognizer.close();
+        startListening(wordToMatch); // Restart the recognition
+      },
+      function (err) {
+        window.console.log(err);
+
+        recognizer.close();
+        // recognizer = undefined;
+      }
+    );
+  };
 
   const speakText = () => {
     const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -61,21 +112,6 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
         synthesizer.close();
       }
     );
-  };
-
-  const nextWord = () => {
-    let newIndex = 0;
-    if (currentWord) {
-      newIndex = +1;
-    }
-    setWordIndex(newIndex);
-    const randomWord = tagalogWords[newIndex];
-    setCurrentWord(randomWord);
-    setSpokenWord("");
-    if (!isListening) {
-      setIsListening(true);
-      startListening(randomWord); // Automatically restart the recognition
-    }
   };
 
   const startListening = (wordToMatch: string) => {
@@ -118,6 +154,10 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     nextWord();
   }, []);
 
+  const skipWord = () => {
+    nextWord();
+  };
+
   // useEffect(() => {
   //   if (isMax) {
   //     alert("Congratulations! You have completed the Tagalog pronunciation exercise.");
@@ -135,7 +175,6 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
           className="w-5 h-5 absolute"
           style={{ top: "69px", left: "151px" }}
         >
-          {/* {isSpeaking ? "Speaking..." : "Speak"} */}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" />
             <path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" />
@@ -144,34 +183,21 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
       </div>
 
       <p className="bg-gray-200 p-3 text-gray-500">Translation : Test Person</p>
-      {/* <button
-        className={`mt-4 p-2 rounded-lg bg-blue-500 text-white ${
-          isListening ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={() => startListening(currentWord || "")}
-        disabled={isListening}
-      >
-        {isListening ? "Listening..." : "Start Speaking"}
-      </button> */}
+
       {spokenWord && (
         <div className="mt-4">
           <h3>You said:</h3>
           <p className="spoken-word text-lg text-green-500">{spokenWord}</p>
         </div>
       )}
-      {/* <SpeechSynthesizer textToSynthesize={currentWord || ""} /> */}
-      {/* <button onClick={startListening}>Start Listening</button> */}
-      {/* <h2 className="text-xl font-bold">Speech Recognition in Tagalog</h2>
-      <p className="mt-4 text-lg">{transcript ? `You said: ${transcript}` : "Say something..."}</p>
+
       <button
-        className={`mt-4 p-2 rounded-lg bg-blue-500 text-white ${
-          isListening ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={startListening}
-        disabled={isListening}
+        onClick={() => skipWord()}
+        style={{ padding: "10px 20px" }}
+        className="px-4 py-2 text-white rounded bg-teal-300 w-full"
       >
-        {isListening ? "Listening..." : "Start Speaking"}
-      </button> */}
+        Skip
+      </button>
     </div>
   );
 };

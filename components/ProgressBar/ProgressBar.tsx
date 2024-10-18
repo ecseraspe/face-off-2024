@@ -2,6 +2,7 @@
 // components/Car.tsx
 import React, { useEffect, useState } from "react";
 import { useMyPresence, useOthers } from "@liveblocks/react";
+import { useUser } from "@clerk/nextjs";
 
 type IProps = {
   value: number;
@@ -21,8 +22,10 @@ const colors = [
 ];
 const ProgressBar: React.FC<IProps> = ({ value }) => {
   const [progress, setProgress] = useState<number>();
+  const [imageUrl, setImageUrl] = useState<string>();
   const others = useOthers();
   const [myPresence, updateMyPresence] = useMyPresence();
+  const { user: login } = useUser();
 
   const randomColor = () => {
     if (myPresence.color) {
@@ -63,36 +66,33 @@ const ProgressBar: React.FC<IProps> = ({ value }) => {
   //   };
   // }, [isMoving, progress]);
 
-  useEffect(() => {
-    setProgress(value);
-  }, [value]);
+  const getMyAvatar = (user: any = null) => {
+    if (user && user.presence.avatarUrl) {
+      return user.presence.avatarUrl.toString();
+    }
+    if (myPresence && myPresence.avatarUrl) return myPresence.avatarUrl.toString();
 
+    return "";
+  };
+  console.log("@@@score", myPresence.score);
   return (
     <div className="mt-10 flex w-full flex-col items-center justify-center ">
-      {/* <div className="relative h-20 bg-gray-200" style={{ width: "550px" }}>
-        <div
-          className="absolute w-12 h-6 transition-transform"
-          style={{ transform: `translateX(${carPosition}px)` }}
-        >
-          <CarIcon />
-          Jai2x
-        </div>
-      </div> */}
-      {/* Horizontal progress bar with avatar */}
-      {/* <div className="relative w-full bg-gray-200 h-6 rounded-full mt-8"> */}
-      <div className="relative bg- pt-3 pb-3 w-full" style={{ maxWidth: "550px" }}>
+      <div
+        className="shadow-lg relative bg-gray-200 pt-3 pb-3 w-full"
+        style={{ maxWidth: "550px" }}
+      >
         {others.map((user) => {
           return (
             <div
               className={`shadow-md mt-2 ${user.presence.color} h-6 flex p-1 items-center relative`}
-              style={{ width: `${progress}%` }}
+              style={{ width: `${user.presence.score || 0}%` }}
             >
-              <span className="p-1">{user.info?.name}</span>
+              {Number(user.presence.score) > 1 && <span className="p-1">{user.info?.name}</span>}
               <div className="absolute top-1/2 -right-5 -translate-y-1/2 translate-x-1/2">
                 <img
-                  className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                  src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
+                  src={getMyAvatar(user)}
+                  alt={`${login?.firstName}'s avatar`}
+                  className="w-8 rounded-full border-2 border-gray-300 shadow-sm"
                 />
               </div>
             </div>
@@ -101,14 +101,14 @@ const ProgressBar: React.FC<IProps> = ({ value }) => {
 
         <div
           className={`shadow-md mt-2 ${randomColor()} h-6 flex p-1 items-center relative`}
-          style={{ width: `${progress}%` }}
+          style={{ width: `${myPresence.score || 0}%` }}
         >
-          <span className="p-1">You</span>
+          {Number(myPresence.score) > 1 && <span className="p-1">You</span>}
           <div className="absolute top-1/2 -right-5 -translate-y-1/2 translate-x-1/2">
             <img
-              className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
-              src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt=""
+              src={getMyAvatar()}
+              alt={`${login?.firstName}'s avatar`}
+              className="w-8 rounded-full border-2 border-gray-300 shadow-sm"
             />
           </div>
         </div>
@@ -138,17 +138,6 @@ const ProgressBar: React.FC<IProps> = ({ value }) => {
           />
         </div> */}
       </div>
-
-      {/* <button
-        onClick={progress >= max ? resetProgress : incrementProgress}
-        disabled={isMoving && progress < max}
-        className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
-      >
-        {progress >= max ? "Reset" : "Go"}
-      </button>
-      {progress >= max && (
-        <p className="text-xl text-green-500 mt-4">You reached the finish line!</p>
-      )} */}
     </div>
   );
 };

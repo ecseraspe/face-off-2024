@@ -70,6 +70,7 @@ export type LobbyRoom = {
 type Storage = {
   startTime: number | null;
   currentWord: string | null;
+  selectedHost: number | null;
 };
 type RoomEvent = {};
 type ThreadMetadata = {};
@@ -81,9 +82,7 @@ export const {
     // Other hooks
     // ...
   },
-} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(
-  client
-);
+} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(client);
 
 export const {
   suspense: {

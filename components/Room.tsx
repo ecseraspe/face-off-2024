@@ -1,6 +1,6 @@
 "use client";
 import { Presence, useMyPresence } from "@/liveblocks.config";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useRoom, useStorage } from "@liveblocks/react";
 import { useIsInsideRoom, useOthers } from "@liveblocks/react/suspense";
 import { useEffect, useRef, useState } from "react";
@@ -23,16 +23,24 @@ export default function Room() {
   const count = others.length;
   const timerInterval = useRef<NodeJS.Timer | null>(null);
   const startTime = useStorage((root) => root.startTime); // Track the start time in storage
+  const selectedHost = useStorage((root) => root.selectedHost);
   const [isHost, setIsHost] = useState(false);
-  const [startGame, setStartGame] = useState(true);
+  const [startGame, setStartGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const { userId, isSignedIn } = useAuth(); // Assume this provides `user` and `logout` functions
+  const { userId, isSignedIn } = useAuth();
+  const { user: login } = useUser(); // Assume this provides `user` and `logout` functions
 
   useEffect(() => {
     if (!isSignedIn) {
       updateMyPresence({ ...myPresence, isReady: false });
     }
   }, [isSignedIn]);
+
+  useEffect(() => {
+    if (login) {
+      updateMyPresence({ ...myPresence, avatarUrl: login.imageUrl });
+    }
+  }, [login]);
 
   useEffect(() => {
     async function fetchToken() {
@@ -57,10 +65,13 @@ export default function Room() {
   }, []);
 
   useEffect(() => {
-    if (count === 0) {
+    if (!selectedHost) {
       setIsHost(true);
+      room.getStorage().then((storage) => {
+        storage.root.set("selectedHost", userId);
+      });
     }
-  }, [count]);
+  }, [selectedHost]);
 
   // Set initial presence when joining the room
   useEffect(() => {
@@ -144,7 +155,7 @@ export default function Room() {
     updateMyPresence({ isReady: true });
   };
 
-  const isButtonEnabled = count + 1 >= 1; // At least 2 players needed
+  const isButtonEnabled = count + 1 >= 2; // At least 2 players needed
 
   if (!token) return <div>Please signin to join.</div>;
 
@@ -189,7 +200,7 @@ export default function Room() {
           </ul>
 
           <div className="mt-48">
-            {count > 0 && isNotReady() && (
+            {isNotReady() && (
               <button
                 onClick={toggleReady}
                 disabled={!isButtonEnabled || ready}
@@ -199,7 +210,7 @@ export default function Room() {
                     : "bg-gray-500 cursor-not-allowed"
                 } text-white font-bold py-2 px-4 rounded mb-4`}
               >
-                {ready ? "Waiting for others..." : "Get Ready"}
+                {ready || count < 1 ? "Waiting for others..." : "Get Ready"}
               </button>
             )}
           </div>

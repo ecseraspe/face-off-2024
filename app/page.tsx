@@ -3,11 +3,7 @@ import { ComponentProps, ReactNode, useEffect, useState } from "react";
 import { MarketingLayout } from "@/layouts/Marketing";
 import { Container } from "@/primitives/Container";
 import styles from "./page.module.css";
-import {
-  RoomProvider,
-  ClientSideSuspense,
-  LiveblocksProvider,
-} from "@liveblocks/react";
+import { RoomProvider, ClientSideSuspense, LiveblocksProvider } from "@liveblocks/react";
 import Room from "@/components/Room";
 import { useAuth } from "@clerk/nextjs";
 
@@ -43,14 +39,14 @@ export default function Index() {
                 name: "",
                 isReady: false,
                 color: "",
+                avatarUrl: null,
+                score: null,
               }}
               initialStorage={{
                 startTime: null,
               }}
             >
-              <ClientSideSuspense
-                fallback={<div>Please signin to join...</div>}
-              >
+              <ClientSideSuspense fallback={<div>Please signin to join...</div>}>
                 <Room />
               </ClientSideSuspense>
             </RoomProvider>
