@@ -11,6 +11,19 @@ import Game from "./Game/Game";
 const COUNTDOWN_DURATION = 3; // 3 seconds countdown before the game starts
 const GAME_DURATION = 60; // 2 minutes game duration
 
+const colors = [
+  "bg-gray-500",
+  "bg-red-500",
+  "bg-green-500",
+  "bg-blue-500",
+  "bg-violet-500",
+  "bg-yellow-500",
+  "bg-teal-500",
+  "bg-lime-500",
+  "bg-cyan-500",
+  "bg-orange-500",
+];
+
 export default function Room() {
   const [token, setToken] = useState<string | null>(null);
   const roomId = "liveblocks-tutorial-uGsBXuwY-c0_1ouo_TGBa";
@@ -30,6 +43,19 @@ export default function Room() {
   const { userId, isSignedIn } = useAuth();
   const { user: login } = useUser(); // Assume this provides `user` and `logout` functions
 
+  const randomColor = () => {
+    if (myPresence.color) {
+      return myPresence.color;
+    }
+    let newIndex = Math.floor(Math.random() * colors.length);
+    let selectedColor = colors[newIndex];
+    if (others.some((user) => user.presence.color === selectedColor)) {
+      randomColor();
+    }
+
+    return colors[newIndex];
+  };
+
   useEffect(() => {
     if (!isSignedIn) {
       updateMyPresence({ ...myPresence, isReady: false });
@@ -38,7 +64,7 @@ export default function Room() {
 
   useEffect(() => {
     if (login) {
-      updateMyPresence({ ...myPresence, avatarUrl: login.imageUrl });
+      updateMyPresence({ ...myPresence, avatarUrl: login.imageUrl, color: randomColor() });
     }
   }, [login]);
 
@@ -122,6 +148,31 @@ export default function Room() {
     }
   }, [startTime]);
 
+  const getWinner = (): string | null => {
+    let highestScore = -Infinity;
+    let winner: string | null = null;
+
+    const yourScore = myPresence.score || 0;
+    // Iterate over others to find the player with the highest score
+    others.forEach((player, playerId) => {
+      if (Number(player.presence.score) > highestScore) {
+        highestScore = Number(player.presence.score) || 0;
+        winner = player.info?.name || "";
+      } else if (player.presence.score === highestScore) {
+        winner = null; // It's a tie
+      }
+    });
+
+    // Compare your score with the highest score
+    if (yourScore > highestScore) {
+      winner = login?.firstName || ""; // Set your ID as the winner
+    } else if (yourScore === highestScore) {
+      winner = null; // It's a tie with you
+    }
+
+    return winner;
+  };
+
   // Handle 2-minute game timer
   useEffect(() => {
     if (gameTimer === null) return;
@@ -131,8 +182,9 @@ export default function Room() {
     }, 1000);
 
     if (gameTimer === 0) {
+      const winner = getWinner();
       clearInterval(timerInterval.current!);
-      alert("Game Over!");
+      alert(`🎉 Congratulations, ${winner}! You are the winner!`);
       setGameTimer(null);
       setCountdown(null);
       setGameOver(true);

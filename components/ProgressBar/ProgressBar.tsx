@@ -8,18 +8,6 @@ type IProps = {
   value: number;
 };
 
-const colors = [
-  "bg-gray-500",
-  "bg-red-500",
-  "bg-green-500",
-  "bg-blue-500",
-  "bg-violet-500",
-  "bg-yellow-500",
-  "bg-teal-500",
-  "bg-lime-500",
-  "bg-cyan-500",
-  "bg-orange-500",
-];
 const ProgressBar: React.FC<IProps> = ({ value }) => {
   const [progress, setProgress] = useState<number>();
   const [imageUrl, setImageUrl] = useState<string>();
@@ -27,19 +15,19 @@ const ProgressBar: React.FC<IProps> = ({ value }) => {
   const [myPresence, updateMyPresence] = useMyPresence();
   const { user: login } = useUser();
 
-  const randomColor = () => {
-    if (myPresence.color) {
-      return myPresence.color;
-    }
-    let newIndex = Math.floor(Math.random() * colors.length);
-    let selectedColor = colors[newIndex];
-    if (others.some((user) => user.presence.color === selectedColor)) {
-      randomColor();
-      return;
-    }
-    updateMyPresence({ ...myPresence, color: colors[newIndex] });
-    return colors[newIndex];
-  };
+  // const randomColor = () => {
+  //   if (myPresence.color) {
+  //     return myPresence.color;
+  //   }
+  //   let newIndex = Math.floor(Math.random() * colors.length);
+  //   let selectedColor = colors[newIndex];
+  //   if (others.some((user) => user.presence.color === selectedColor)) {
+  //     randomColor();
+  //     return;
+  //   }
+  //   updateMyPresence({ ...myPresence, color: colors[newIndex] });
+  //   return colors[newIndex];
+  // };
   // const incrementProgress = () => {
   //   setIsMoving(true);
   // };
@@ -100,7 +88,7 @@ const ProgressBar: React.FC<IProps> = ({ value }) => {
         })}
 
         <div
-          className={`shadow-md mt-2 ${randomColor()} h-6 flex p-1 items-center relative`}
+          className={`shadow-md mt-2 ${myPresence.color} h-6 flex p-1 items-center relative`}
           style={{ width: `${myPresence.score || 0}%` }}
         >
           {Number(myPresence.score) > 1 && <span className="p-1">You</span>}

@@ -12,16 +12,211 @@ type IProps = {
 
 const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
   const tagalogWords = [
-    "kamusta",
-    "salamat",
-    "pagkain",
-    "bahay",
-    "kaibigan",
-    "maganda",
-    "tao",
-    "araw",
-    "gabi",
-    "lalaki",
+    {
+      filipino: "pagtataya",
+      english: "evaluation",
+      difficulty: 2,
+    },
+    {
+      filipino: "tamang asal",
+      english: "proper conduct",
+      difficulty: 2,
+    },
+    {
+      filipino: "pagsisikap",
+      english: "endeavor",
+      difficulty: 2,
+    },
+    {
+      filipino: "labanan",
+      english: "to fight",
+      difficulty: 1,
+    },
+    {
+      filipino: "panawagan",
+      english: "call",
+      difficulty: 2,
+    },
+    {
+      filipino: "iwasan",
+      english: "to avoid",
+      difficulty: 1,
+    },
+    {
+      filipino: "sili",
+      english: "chili",
+      difficulty: 1,
+    },
+    {
+      filipino: "timbang",
+      english: "weight",
+      difficulty: 2,
+    },
+    {
+      filipino: "pagsasama",
+      english: "togetherness",
+      difficulty: 1,
+    },
+    {
+      filipino: "ako",
+      english: "I",
+      difficulty: 1,
+    },
+    {
+      filipino: "pancit canton",
+      english: "egg noodles",
+      difficulty: 1,
+    },
+    {
+      filipino: "responsibilidad",
+      english: "responsibility",
+      difficulty: 2,
+    },
+    {
+      filipino: "bunga",
+      english: "fruit",
+      difficulty: 1,
+    },
+    {
+      filipino: "matalino",
+      english: "smart",
+      difficulty: 1,
+    },
+    {
+      filipino: "kuwento",
+      english: "story",
+      difficulty: 1,
+    },
+    {
+      filipino: "kalayaan",
+      english: "autonomy",
+      difficulty: 3,
+    },
+    {
+      filipino: "pagtatayo",
+      english: "construction",
+      difficulty: 2,
+    },
+    {
+      filipino: "pakikipag ugnayan",
+      english: "interaction",
+      difficulty: 2,
+    },
+    {
+      filipino: "paghahanda",
+      english: "preparation",
+      difficulty: 2,
+    },
+    {
+      filipino: "katapatan",
+      english: "integrity",
+      difficulty: 2,
+    },
+    {
+      filipino: "pagpapahayag",
+      english: "expression",
+      difficulty: 2,
+    },
+    {
+      filipino: "kasunduan",
+      english: "treaty",
+      difficulty: 3,
+    },
+    {
+      filipino: "luna",
+      english: "moon",
+      difficulty: 1,
+    },
+    {
+      filipino: "kaganapan",
+      english: "event",
+      difficulty: 1,
+    },
+    {
+      filipino: "sapatos",
+      english: "shoes",
+      difficulty: 1,
+    },
+    {
+      filipino: "pagkakaisa",
+      english: "unity",
+      difficulty: 2,
+    },
+    {
+      filipino: "pagbuo",
+      english: "formation",
+      difficulty: 2,
+    },
+    {
+      filipino: "gulay",
+      english: "vegetable",
+      difficulty: 1,
+    },
+    {
+      filipino: "pag uunawa",
+      english: "understanding",
+      difficulty: 2,
+    },
+    {
+      filipino: "magsanay",
+      english: "to train",
+      difficulty: 1,
+    },
+    {
+      filipino: "diskriminasyon",
+      english: "discrimination",
+      difficulty: 3,
+    },
+    {
+      filipino: "magsimula",
+      english: "to start",
+      difficulty: 1,
+    },
+    {
+      filipino: "kare kare",
+      english: "oxtail stew",
+      difficulty: 1,
+    },
+    {
+      filipino: "nakakapagpabagabag",
+      english: "unsettling",
+      difficulty: 1,
+    },
+    {
+      filipino: "pagbasa",
+      english: "reading",
+      difficulty: 1,
+    },
+    {
+      filipino: "aliw",
+      english: "entertainment",
+      difficulty: 1,
+    },
+    {
+      filipino: "maamong",
+      english: "gentle",
+      difficulty: 1,
+    },
+    {
+      filipino: "umibig",
+      english: "to love",
+      difficulty: 1,
+    },
+    {
+      filipino: "nanay",
+      english: "mother",
+      difficulty: 1,
+    },
+    {
+      filipino: "malakas",
+      english: "strong",
+      difficulty: 1,
+    },
+    {
+      filipino: "saan",
+      english: "where",
+      difficulty: 1,
+    },
   ];
   const [currentWord, setCurrentWord] = useState<string>();
   const [wordIndex, setWordIndex] = useState<number>(0);
@@ -31,13 +226,14 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [myPresence, updateMyPresence] = useMyPresence();
   const audioRefSuccess = useRef<HTMLAudioElement | null>(null);
+  const audioRefError = useRef<HTMLAudioElement | null>(null);
+
   const speakText = () => {
+    setIsListening(false);
     const speechConfig = sdk.SpeechConfig.fromSubscription(
       process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY!,
       process.env.NEXT_PUBLIC_AZURE_SPEECH_REGION!
     );
-
-    setIsListening(false);
 
     speechConfig.speechSynthesisVoiceName = "fil-PH-BlessicaNeural";
     const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
@@ -54,7 +250,6 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
         }
         setIsSpeaking(false);
         synthesizer.close();
-        setIsListening(true);
       },
       (error) => {
         console.error(error);
@@ -64,8 +259,26 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     );
   };
 
-  const startListening = (wordToMatch: string, wIndex: number) => {
-    console.log("@@@@1", wordToMatch);
+  const nextWord = () => {
+    const randomWord = tagalogWords[wordIndex].filipino;
+    console.log("@@@@6", randomWord, wordIndex);
+    setCurrentWord(randomWord);
+    setWordIndex(wordIndex + 1);
+    setSpokenWord("");
+  };
+
+  const skipWord = () => {
+    nextWord();
+    setIsListening(false);
+  };
+
+  useEffect(() => {
+    nextWord();
+  }, []);
+
+  const startListening = (wordToMatch: string) => {
+    if (!wordToMatch) return;
+
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -74,68 +287,39 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
     }
 
     const recognition = new SpeechRecognition();
+
     recognition.lang = "tl-PH"; // Tagalog language
-    recognition.start();
     recognition.continuous = true; // Enable continuous listening
     recognition.interimResults = false; // You can set this to true to get real-time results
+    recognition.start();
     setIsListening(true);
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = async (event: any) => {
+      if (!isListening) return;
       const spokenWord = event.results[0][0].transcript.toLowerCase();
       console.log("@@@@2", spokenWord);
       setSpokenWord(spokenWord); // Update the spoken word
 
       if (spokenWord === wordToMatch.toLowerCase()) {
-        recognition.stop(); // Stop listening after the speech ends
-        incrementProgress(); // Move the progress bar
-        nextWord(wordToMatch, wIndex + 1); // Show the next word
         audioRefSuccess.current?.play();
+        incrementProgress(); // Move the progress bar
 
-        console.log("@@@@3");
+        nextWord(); // Show the next word
+        setIsListening(false);
       } else {
         // alert("Incorrect pronunciation. Try again!");
-        recognition.stop(); // Stop listening after the speech ends
-        startListening(wordToMatch, wIndex); // Restart the recognition
-        console.log("@@@@4");
+        audioRefError.current?.play();
+        startListening(wordToMatch); // Restart the recognition
       }
     };
 
     recognition.onspeechend = () => {
       recognition.stop(); // Stop listening after the speech ends
-      startListening(wordToMatch, wIndex); // Restart the recognition
     };
 
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error:", event);
     };
-  };
-
-  const nextWord = useCallback(
-    (cWord: string | undefined, indx: number) => {
-      let newIndex = 0;
-      if (cWord) {
-        newIndex = indx;
-      }
-
-      const randomWord = tagalogWords[newIndex];
-      setCurrentWord(randomWord);
-      setWordIndex(newIndex);
-      setSpokenWord("");
-
-      if (!isListening) {
-        setIsListening(true);
-        startListening(randomWord, newIndex); // Automatically restart the recognition
-      }
-    },
-    [currentWord, wordIndex]
-  );
-
-  useEffect(() => {
-    nextWord(undefined, 0);
-  }, []);
-
-  const skipWord = () => {
-    nextWord(currentWord, wordIndex + 1);
   };
 
   // useEffect(() => {
@@ -150,6 +334,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
       <h2>Pronounce the following word:</h2>
       <div className="w-full relative">
         <p className="current-word text-3xl pb-12 pt-5">{currentWord}</p>
+
         <button
           onClick={speakText}
           className="w-5 h-5 absolute"
@@ -162,7 +347,9 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
         </button>
       </div>
 
-      <p className="bg-gray-200 p-3 text-gray-500">Translation : Test Person</p>
+      <p className="bg-gray-200 p-3 text-gray-500">
+        Translation : {tagalogWords[wordIndex].english}
+      </p>
 
       {spokenWord && (
         <div className="mt-4">
@@ -172,13 +359,25 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
       )}
 
       <button
+        className={`mt-4 pt-4 pb-4 w-full rounded-lg bg-blue-500 text-white ${
+          isListening ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        onClick={() => startListening(currentWord || "")}
+        disabled={isListening}
+      >
+        {isListening ? "Listening..." : "Start Speaking"}
+      </button>
+      <button onClick={incrementProgress}>Increment</button>
+
+      <button
         onClick={() => skipWord()}
         style={{ padding: "10px 20px" }}
-        className="px-4 py-2 text-white rounded bg-teal-300 w-full"
+        className="px-4 mt-2 py-2 text-white rounded bg-teal-300 w-full"
       >
         Skip
       </button>
-      <audio ref={audioRefSuccess} src="../../../assets/pickup_word.wav" preload="auto" />
+      <audio ref={audioRefSuccess} src="/audio/success_word.mp3" preload="auto" />
+      <audio ref={audioRefError} src="/audio/error_word.mp3" preload="auto" />
     </div>
   );
 };

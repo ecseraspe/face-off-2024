@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import SpeechRecognitionComponent from "../SpeechRecognition/SpeechRecognition";
-import { useMyPresence } from "@liveblocks/react";
+import { useMyPresence } from "@/liveblocks.config";
 
 export default function Game() {
   const startLine = 0; // Starting position
@@ -14,7 +14,7 @@ export default function Game() {
   const incrementProgress = useCallback(() => {
     setProgress((prev) => prev + 5);
     setIsMax(progress >= max);
-    updateMyPresence({ ...myPresence, score: progress + 5 });
+    updateMyPresence({ ...myPresence, score: progress + 10 });
   }, [progress]);
 
   return (
