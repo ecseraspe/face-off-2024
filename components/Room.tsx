@@ -58,7 +58,7 @@ export default function Room() {
   };
 
   useEffect(() => {
-    if (gameTimer && gameTimer <= 100) {
+    if (gameTimer && gameTimer <= 10) {
       setIsBlinking(true);
     }
   }, [gameTimer]);
@@ -283,7 +283,9 @@ export default function Room() {
       )}
       {gameTimer !== null && (
         <h2
-          className={`${isBlinking && gameTimer % 2 === 0 ? "opacity-100" : "opacity-50"} 
+          className={`font-bold ${gameTimer <= 10 ? "text-red-500" : "text-black"} ${
+            isBlinking && gameTimer % 2 === 0 ? "opacity-100" : "opacity-50"
+          } 
       transition-opacity duration-500`}
         >
           Time Left: {gameTimer} seconds
