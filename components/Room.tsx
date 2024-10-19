@@ -9,7 +9,7 @@ import { A } from "@liveblocks/react/dist/suspense-fYGGJ3D9";
 import Game from "./Game/Game";
 
 const COUNTDOWN_DURATION = 3; // 3 seconds countdown before the game starts
-const GAME_DURATION = 60; // 2 minutes game duration
+const GAME_DURATION = 120; // 2 minutes game duration
 
 const colors = [
   "bg-gray-500",
@@ -42,6 +42,7 @@ export default function Room() {
   const [gameOver, setGameOver] = useState(false);
   const { userId, isSignedIn } = useAuth();
   const { user: login } = useUser(); // Assume this provides `user` and `logout` functions
+  const [isBlinking, setIsBlinking] = useState(false);
 
   const randomColor = () => {
     if (myPresence.color) {
@@ -55,6 +56,12 @@ export default function Room() {
 
     return colors[newIndex];
   };
+
+  useEffect(() => {
+    if (gameTimer && gameTimer <= 100) {
+      setIsBlinking(true);
+    }
+  }, [gameTimer]);
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -274,7 +281,14 @@ export default function Room() {
           Starting in: <h1 className="text-8xl font-bold text-red-500">{countdown}</h1>
         </p>
       )}
-      {gameTimer !== null && <h2>Time Left: {gameTimer} seconds</h2>}
+      {gameTimer !== null && (
+        <h2
+          className={`${isBlinking && gameTimer % 2 === 0 ? "opacity-100" : "opacity-50"} 
+      transition-opacity duration-500`}
+        >
+          Time Left: {gameTimer} seconds
+        </h2>
+      )}
 
       {isHost && !countdown && !gameTimer && ready && isEveryoneReady() && (
         <button

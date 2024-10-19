@@ -314,7 +314,7 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
   };
 
   const nextWord = () => {
-    const randomWord = tagalogWords[wordIndex].filipino;
+    const randomWord = randomizeWords[wordIndex].filipino;
     console.log("@@@@6", randomWord, wordIndex);
     setCurrentWord(randomWord);
     setWordIndex(wordIndex + 1);
@@ -328,15 +328,15 @@ const SpeechRecognitionComponent = ({ incrementProgress, isMax }: IProps) => {
 
   const getTranslation = (currentWord: string | undefined) => {
     if (currentWord) {
-      const word = tagalogWords.find((f) => f.filipino === currentWord);
+      const word = randomizeWords.find((f) => f.filipino === currentWord);
       return word?.english;
     }
     return null;
   };
 
   useEffect(() => {
-    nextWord();
-  }, []);
+    if (randomizeWords.length > 0) nextWord();
+  }, [randomizeWords]);
 
   const startListening = (wordToMatch: string) => {
     if (!wordToMatch) return;
